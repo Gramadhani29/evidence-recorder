@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "QA Evidence Recorder",
+  "version": "1.9.0",
+  "description": "QA Evidence Recorder with hybrid capture, UAT session manager, and unified multi-TC review workspace, draggable text labels, free text, and transparent blur.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "downloads",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "https://*.bkpem.msidev.net/*"
+  ],
+  "action": {
+    "default_title": "QA Evidence Recorder",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.bkpem.msidev.net/*"
+      ],
+      "js": [
+        "qa-core.js",
+        "content.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}

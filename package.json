@@ -1,0 +1,9 @@
+{
+  "name": "qa-evidence-recorder",
+  "version": "1.9.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check background.js && node --check content.js && node --check db.js && node --check popup.js && node --check review.js && node --check qa-core.js"
+  }
+}

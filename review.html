@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QA Evidence Recorder — Review & Validasi</title>
+  <link rel="stylesheet" href="review.css">
+</head>
+<body>
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="logo-badge">📸</div>
+      <div class="app-branding">
+        <h1 class="nav-title">QA Evidence Reviewer</h1>
+        <span class="nav-sub">Semua TC & Evidence dalam satu workspace</span>
+      </div>
+      <div class="tc-container active-tc-container">
+        <label for="tcInput">TC aktif:</label>
+        <input type="text" id="tcInput" class="tc-input" value="TC-SAMPLE" title="Klik untuk mengubah Test Case ID" />
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <div class="step-counter-pill" id="stepCounterPill">
+        Langkah <span id="currentStepNum">-</span> dari <span id="totalStepsNum">-</span>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <button id="downloadZipBtn" class="btn btn-secondary" title="Unduh semua screenshot dalam satu file ZIP">
+        <span class="btn-icon">📦</span> Unduh ZIP
+      </button>
+      <button id="downloadAllBtn" class="btn btn-primary" title="Unduh semua file PNG ke folder QA-Evidence/<TC-ID>/">
+        <span class="btn-icon">⬇️</span> Unduh Semua PNG
+      </button>
+    </div>
+  </header>
+
+  <main class="main-layout">
+    <aside class="sidebar review-sidebar">
+      <section class="tc-library">
+        <div class="sidebar-header tc-library-header">
+          <div class="sidebar-title">
+            <span>Semua Test Case</span>
+            <span class="badge" id="tcLibraryCount">0</span>
+          </div>
+          <button id="refreshTcLibraryBtn" class="btn-icon-subtle" title="Muat ulang daftar TC">↻</button>
+        </div>
+        <div class="tc-search-wrap">
+          <input id="tcSearchInput" class="tc-search-input" type="search" placeholder="Cari TC ID..." autocomplete="off" />
+        </div>
+        <div class="tc-library-list" id="tcLibraryList"></div>
+      </section>
+
+      <section class="step-library">
+        <div class="sidebar-header">
+          <div class="sidebar-title">
+            <span>Screenshot TC</span>
+            <span class="badge" id="sidebarBadgeCount">0</span>
+          </div>
+          <div class="sidebar-actions">
+            <button id="clearAllBtn" class="btn-icon-subtle" title="Hapus semua screenshot TC terpilih">
+              🗑 Hapus Screenshot
+            </button>
+          </div>
+        </div>
+        <div class="steps-list" id="stepsList"></div>
+      </section>
+    </aside>
+
+    <section class="workspace">
+      <div class="editor-toolbar">
+        <div class="toolbar-group">
+          <span class="group-label">Alat:</span>
+          <button id="toolSelectBtn" class="tool-btn active" title="Pilih, geser, atau ubah ukuran shape (V)">
+            <span class="icon">🖱️</span> Pilih
+          </button>
+          <button id="toolBoxBtn" class="tool-btn" title="Klik & tarik pada gambar untuk membuat kotak baru (K)">
+            <span class="icon">🟥</span> + Kotak
+          </button>
+          <button id="toolTextBtn" class="tool-btn" title="Klik pada gambar untuk menambahkan free text (T)">
+            <span class="icon">📝</span> + Teks
+          </button>
+          <button id="toolBlurBtn" class="tool-btn" title="Klik & tarik pada gambar untuk membuat area blur transparan (B)">
+            <span class="icon">🌫️</span> + Blur
+          </button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div id="shapePropsGroup" class="toolbar-group shape-props" style="display:none;">
+          <div class="shape-text-container" id="shapeTextContainer">
+            <span class="group-label">Teks:</span>
+            <input type="text" id="shapeTextInput" class="shape-text-input" placeholder="Tulis label / free text..." />
+          </div>
+
+          <div class="color-picker-group" id="shapeColorPicker">
+            <span class="group-label">Warna:</span>
+            <button class="color-swatch active" data-color="#ff1616" style="background:#ff1616" title="Merah"></button>
+            <button class="color-swatch" data-color="#f97316" style="background:#f97316" title="Oranye"></button>
+            <button class="color-swatch" data-color="#facc15" style="background:#facc15" title="Kuning"></button>
+            <button class="color-swatch" data-color="#84cc16" style="background:#84cc16" title="Lime"></button>
+            <button class="color-swatch" data-color="#22c55e" style="background:#22c55e" title="Hijau"></button>
+            <button class="color-swatch" data-color="#14b8a6" style="background:#14b8a6" title="Teal"></button>
+            <button class="color-swatch" data-color="#06b6d4" style="background:#06b6d4" title="Cyan"></button>
+            <button class="color-swatch" data-color="#3b82f6" style="background:#3b82f6" title="Biru"></button>
+            <button class="color-swatch" data-color="#6366f1" style="background:#6366f1" title="Indigo"></button>
+            <button class="color-swatch" data-color="#a855f7" style="background:#a855f7" title="Ungu"></button>
+            <button class="color-swatch" data-color="#ec4899" style="background:#ec4899" title="Pink"></button>
+            <button class="color-swatch color-swatch-light" data-color="#ffffff" style="background:#ffffff" title="Putih"></button>
+          </div>
+
+          <div class="toolbar-group" id="shapeLineWidthGroup">
+            <span class="group-label">Garis:</span>
+            <select id="lineWidthSelect" class="toolbar-select">
+              <option value="2">2 px</option>
+              <option value="3" selected>3 px</option>
+              <option value="5">5 px</option>
+              <option value="8">8 px</option>
+            </select>
+          </div>
+
+          <button id="deleteShapeBtn" class="tool-btn tool-btn-danger" title="Hapus shape yang dipilih (Del)">
+            <span class="icon">🗑</span> Hapus
+          </button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="toolbar-group">
+          <button id="resetMarkBtn" class="tool-btn" title="Kembalikan ke highlight posisi klik awal">
+            <span class="icon">🔄</span> Reset Awal
+          </button>
+        </div>
+
+        <div class="toolbar-group evidence-view-controls" id="evidenceViewControls" style="display:none;">
+          <span class="group-label">Evidence:</span>
+          <button id="viewBeforeBtn" class="tool-btn" title="Lihat kondisi sebelum pengisian">Before</button>
+          <button id="viewAfterBtn" class="tool-btn active" title="Lihat kondisi sesudah pengisian">After</button>
+        </div>
+
+        <div class="toolbar-group step-note-group">
+          <span class="group-label">Catatan Step:</span>
+          <input type="text" id="stepLabelInput" class="step-label-input toolbar-step-input" placeholder="Nama / deskripsi langkah..." />
+        </div>
+
+        <div class="toolbar-group zoom-controls">
+          <button id="zoomOutBtn" class="tool-btn icon-only" title="Perkecil (−)">−</button>
+          <span id="zoomLabel" class="zoom-text">Fit</span>
+          <button id="zoomInBtn" class="tool-btn icon-only" title="Perbesar (+)">+</button>
+          <button id="zoomFitBtn" class="tool-btn" title="Sesuaikan ukuran tampilan">Fit</button>
+          <button id="zoom100Btn" class="tool-btn" title="Ukuran asli (100%)">100%</button>
+        </div>
+      </div>
+
+      <div class="viewport-container" id="viewportContainer">
+        <div class="canvas-stage" id="canvasStage" style="display:none;">
+          <img id="stageImage" class="stage-image" alt="Screenshot Evidence" />
+          <div id="annotationsContainer" class="annotations-container"></div>
+          <div id="drawingDraftBox" class="drawing-draft-box" style="display:none;"></div>
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display:none;">
+          <div class="empty-icon">📷</div>
+          <h2>TC ini belum memiliki screenshot</h2>
+          <p>Pilih TC lain di panel kiri atau lanjutkan recording dari popup extension.</p>
+        </div>
+      </div>
+
+      <footer class="step-footer">
+        <div class="footer-left">
+          <button id="prevStepBtn" class="btn btn-secondary btn-sm" title="Langkah Sebelumnya (Panah Kiri)">
+            ◀ Sebelumnya
+          </button>
+          <button id="nextStepBtn" class="btn btn-secondary btn-sm" title="Langkah Berikutnya (Panah Kanan)">
+            Berikutnya ▶
+          </button>
+        </div>
+
+        <div class="footer-center footer-shortcuts-only">
+          <span class="shortcut-hint">
+            💡 Pintasan: <b>V</b> = Pilih • <b>K</b> = + Kotak • <b>T</b> = + Teks • <b>B</b> = + Blur • <b>Del</b> = Hapus Shape • <b>Drag label</b> = Geser posisi teks kotak • <b>Shift + Panah</b> = Geser 10px
+          </span>
+        </div>
+
+        <div class="footer-right">
+          <button id="deleteStepBtn" class="btn btn-danger-subtle btn-sm" title="Hapus screenshot langkah ini">
+            🗑 Hapus Step
+          </button>
+          <button id="downloadCurrentBtn" class="btn btn-primary btn-sm" title="Unduh screenshot langkah ini saja">
+            ⬇️ Unduh Gambar Ini
+          </button>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <div id="progressModal" class="modal-backdrop" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">Menyiapkan Unduhan...</h3>
+      </div>
+      <div class="progress-bar-container">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+      <p id="progressMessage" class="modal-desc">Memproses gambar...</p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <div id="undoBar" class="undo-bar" hidden>
+    <span id="undoMessage">Evidence dipindahkan ke sampah.</span>
+    <button id="undoDeleteBtn" type="button">Undo</button>
+  </div>
+
+  <script src="db.js"></script>
+  <script src="simple-zip.js"></script>
+  <script src="review.js"></script>
+</body>
+</html>

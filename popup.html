@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QA Evidence Recorder</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --success: #10b981;
+      --accent: #38bdf8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 13px;
+      width: 390px;
+      padding: 16px;
+      color: var(--text-main);
+      background: var(--bg);
+      user-select: none;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .app-icon {
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+    h1 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.2px;
+    }
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-idle { background: #334155; color: #cbd5e1; }
+    .badge-rec {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: pulse 1.2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.8); }
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 9px 12px;
+      background: #090d16;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      font-family: ui-monospace, monospace;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+    }
+    input[type="text"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .options-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+    }
+    .option-item input {
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    .btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: var(--danger-hover);
+    }
+    .btn-secondary {
+      background: #273549;
+      color: #e2e8f0;
+      border: 1px solid var(--card-border);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: #334155;
+    }
+    .btn-accent {
+      background: rgba(2, 132, 199, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .btn-accent:hover:not(:disabled) {
+      background: rgba(2, 132, 199, 0.28);
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+    .card-title {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .card-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .status-text {
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: var(--text-muted);
+      margin-top: 10px;
+      padding: 7px 10px;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 6px;
+      border: 1px dashed var(--card-border);
+    }
+    .session-list { display:flex; flex-direction:column; gap:8px; margin-top:12px; max-height:260px; overflow:auto; }
+    .session-item { background:#111827; border:1px solid var(--card-border); border-radius:8px; padding:9px; }
+    .session-row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .session-tc { font-family:ui-monospace,monospace; font-size:12px; font-weight:700; color:#e2e8f0; }
+    .session-meta { margin-top:4px; font-size:10.5px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .session-actions { display:flex; gap:5px; margin-top:8px; }
+    .session-actions .btn { padding:6px 7px; font-size:10.5px; }
+    .session-delete { flex:0 0 34px !important; width:34px !important; padding:6px 0 !important; color:#f87171; border-color:rgba(239,68,68,.35); }
+    .session-list-header { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .btn-clear-all { width:auto; padding:5px 8px; font-size:10.5px; color:#f87171; background:rgba(239,68,68,.10); border:1px solid rgba(239,68,68,.28); }
+    .btn-clear-all:hover { background:rgba(239,68,68,.20); }
+    .status-pill { font-size:9px; padding:2px 6px; border-radius:999px; font-weight:700; text-transform:uppercase; }
+    .status-active { background:rgba(239,68,68,.16); color:#f87171; }
+    .status-paused { background:rgba(245,158,11,.16); color:#fbbf24; }
+    .status-completed { background:rgba(16,185,129,.16); color:#34d399; }
+    .status-draft { background:rgba(148,163,184,.16); color:#cbd5e1; }
+    .footer-note {
+      font-size: 10.5px;
+      color: #64748b;
+      margin-top: 12px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title-group">
+      <div class="app-icon">📸</div>
+      <h1>Evidence Recorder</h1>
+    </div>
+    <span id="badge" class="badge badge-idle">Idle</span>
+  </div>
+
+  <div id="recordingSection" style="display: none;">
+    <div class="card" style="margin-top:0; border-color:rgba(239,68,68,.3);">
+      <div class="card-title">TC Sedang Direkam</div>
+      <div class="card-value"><span id="activeTcName" style="color:#38bdf8;font-family:monospace;">-</span><span id="activeCountBadge">0 screenshot</span></div>
+    </div>
+    <div class="btn-group" style="margin-top:10px;">
+      <button id="manualCaptureBtn" class="btn btn-secondary">📷 Tangkap Layar Manual</button>
+      <button id="pauseBtn" class="btn btn-accent">⏸ Pause TC</button>
+      <button id="finishBtn" class="btn btn-danger">✓ Selesai TC</button>
+    </div>
+  </div>
+
+  <div id="setupSection">
+    <div class="form-group">
+      <label for="tcInput">Test Case ID</label>
+      <input type="text" id="tcInput" placeholder="TC-MPRO-005-01" maxlength="60" autocomplete="off" />
+    </div>
+    <div class="options-group">
+      <label class="option-item"><input type="checkbox" id="clearPreviousCheckbox"><span>Mulai baru (hapus evidence lama TC ini)</span></label>
+    </div>
+    <div class="btn-group">
+      <button id="startBtn" class="btn btn-primary">▶ Start di Tab Web Ini</button>
+      <button id="createOnlyBtn" class="btn btn-secondary">＋ Simpan TC Tanpa Mulai</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px;">
+    <div class="session-list-header">
+      <div class="card-title" style="margin-bottom:0;">Daftar TC / Lanjutkan Pekerjaan</div>
+      <button id="clearAllTcBtn" class="btn btn-clear-all" title="Hapus semua TC dan seluruh screenshot tersimpan">🗑 Hapus Semua</button>
+      <button id="downloadDiagnosticsBtn" class="btn btn-secondary" title="Unduh log capture dan error terbaru">⬇ Log Diagnostik</button>
+    </div>
+    <div id="sessionList" class="session-list"><div class="session-meta">Belum ada sesi.</div></div>
+  </div>
+
+  <div id="statusMsg" class="status-text">Memeriksa status tab...</div>
+
+  <div class="footer-note">
+    Mode UAT Session Manager: Pause/Resume TC, buat TC berikutnya tanpa membuka Review, lanjutkan TC di tab saat ini, atau buka kembali URL terakhir TC dan lanjutkan recording.
+  </div>
+
+  <script src="db.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
